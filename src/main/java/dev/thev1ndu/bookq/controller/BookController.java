@@ -4,6 +4,9 @@ import dev.thev1ndu.bookq.model.Book;
 import dev.thev1ndu.bookq.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
+    private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
     @GetMapping
     public List<Book> findAll() {
@@ -28,13 +32,15 @@ public class BookController {
     }
 
     @PostMapping
-    public Book createBook(@Valid @RequestBody Book book) {
-        return bookService.createBook(book);
+    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
+        Book created = bookService.createBook(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public Book updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
-        return bookService.updateBook(id, book);
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @Valid @RequestBody Book book) {
+        Book updated = bookService.updateBook(id, book);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
